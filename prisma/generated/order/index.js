@@ -162,16 +162,17 @@ const config = {
     "db"
   ],
   "activeProvider": "postgresql",
+  "postinstall": false,
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": "ORDER_DATABASE_URL",
+        "fromEnvVar": "USER_DATABASE_URL_PRISMA_URL",
         "value": null
       }
     }
   },
-  "inlineSchema": "datasource db {\n  provider = \"postgresql\"\n  url      = env(\"ORDER_DATABASE_URL\")\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/order\"\n}\n\nmodel Order {\n  id         Int      @id @default(autoincrement())\n  totalItems Int      @default(0)\n  totalPrice Float    @default(0.0)\n  status     String   @default(\"Pending\")\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  userId     Int\n  orderItems OrderItem[]\n}\n\nmodel OrderItem {\n  id       Int @id @default(autoincrement())\n  quantity Int\n\n  orderId   Int\n  order     Order @relation(fields: [orderId], references: [id], onDelete: Cascade)\n  productId Int\n}\n",
-  "inlineSchemaHash": "658df05cf77ff0d5dc87738f91b96e05699369cf1e8e91e1dd65bea31fb6e1a9",
+  "inlineSchema": "datasource db {\n  provider  = \"postgresql\"\n  url       = env(\"USER_DATABASE_URL_PRISMA_URL\") // uses connection pooling\n  directUrl = env(\"USER_DATABASE_URL_URL_NON_POOLING\") // uses a direct connection\n}\n\ngenerator client {\n  provider = \"prisma-client-js\"\n  output   = \"./generated/order\"\n}\n\nmodel Order {\n  id         Int      @id @default(autoincrement())\n  totalItems Int      @default(0)\n  totalPrice Float    @default(0.0)\n  status     String   @default(\"Pending\")\n  createdAt  DateTime @default(now())\n  updatedAt  DateTime @updatedAt\n\n  userId     Int\n  orderItems OrderItem[]\n}\n\nmodel OrderItem {\n  id       Int @id @default(autoincrement())\n  quantity Int\n\n  orderId   Int\n  order     Order @relation(fields: [orderId], references: [id], onDelete: Cascade)\n  productId Int\n}\n",
+  "inlineSchemaHash": "70839f5a4f0fa440aa64c825b36cc0376d6429be7e444fb87d23352360c5d3b2",
   "copyEngine": true
 }
 
